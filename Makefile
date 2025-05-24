@@ -6,7 +6,7 @@ RM = rm -f
 
 # Library name and sources
 NAME = libft.a
-SRC = ft_strlen ft_memset ft_bzero
+SRC = ft_strlen ft_memset ft_bzero ft_memcpy
 
 BONUS = ft_lstnew ft_lstadd_front ft_lstsize ft_lstlast ft_lstadd_back \
         ft_lstdelone ft_lstclear ft_lstiter ft_lstmap
