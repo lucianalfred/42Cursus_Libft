@@ -1,54 +1,58 @@
-# Compiler and flags
+# Nome da biblioteca
+NAME = libft.a
+
+# Comandos
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror
 AR = ar rcs
 RM = rm -f
 
-# Library name and sources
-NAME = libft.a
-SRC = ft_strlen ft_memset ft_bzero ft_memcpy
+# Flags
+CFLAGS = -Wall -Wextra -Werror
 
-BONUS = ft_lstnew ft_lstadd_front ft_lstsize ft_lstlast ft_lstadd_back \
-        ft_lstdelone ft_lstclear ft_lstiter ft_lstmap
+# Diretórios
+INCLUDES_DIR = includes
+SRCS_DIR = srcs
+TESTES_DIR = tests
 
-SRCS = $(addsuffix .c, $(SRC))
-BONUS_SRCS = $(addsuffix .c, $(BONUS))
-OBJS = $(SRCS:.c=.o)
-BONUS_OBJS = $(BONUS_SRCS:.c=.o)
-HEADER = libft.h
+# Arquivos-fonte
+SRCS_FILES = \
+	ft_isalpha.c
 
-# Test configuration
-TEST_DIR = testes
-TEST_SRCS = $(wildcard $(TEST_DIR)/*.c)
-TEST_BIN = test_runner
+# Lista de .c com caminho completo
+SRCS = $(addprefix $(SRCS_DIR)/, $(SRCS_FILES))
 
-# Build rules
+# Objetos (no diretório atual)
+OBJS = $(SRCS_FILES:.c=.o)
+
+# Arquivos de teste
+LIBFT = $(SRCS_DIR)/ft_isalpha.c
+TEST_ISALPHA = $(TESTES_DIR)/ft_isalpha_test.c
+IS_ALPHA_TEST_EXEC = ft_isalpha_test
+
+# Regra padrão
 all: $(NAME)
 
+# Geração da lib
 $(NAME): $(OBJS)
-	$(AR) $(NAME) $(OBJS)
+	$(AR) $@ $^
 
-bonus: $(BONUS_OBJS)
-	$(AR) $(NAME) $(BONUS_OBJS)
+# Compilar .c de srcs para .o no diretório atual
+%.o: $(SRCS_DIR)/%.c
+	$(CC) $(CFLAGS) -I $(INCLUDES_DIR) -c $< -o $@
 
-%.o: %.c $(HEADER)
-	$(CC) $(CFLAGS) -c $< -o $@
+# Teste de ft_isalpha
+ft_isalpha_test:
+	$(CC) $(CFLAGS) $(LIBFT) $(TEST_ISALPHA) -I$(INCLUDES_DIR) -o $(IS_ALPHA_TEST_EXEC)
+	@echo "Executando teste para ft_isalpha:"
+	./$(IS_ALPHA_TEST_EXEC)
 
-# Test rules
-test: $(NAME)
-	$(CC) $(CFLAGS) -I. $(TEST_SRCS) -o $(TEST_BIN) -L. -lft -lcriterion
-	./$(TEST_BIN)
-
-valgrind: test
-	valgrind --leak-check=full --show-leak-kinds=all ./$(TEST_BIN)
-
-# Clean rules
+# Limpeza
 clean:
-	$(RM) $(OBJS) $(BONUS_OBJS)
+	$(RM) $(OBJS)
 
 fclean: clean
-	$(RM) $(NAME) $(TEST_BIN)
+	$(RM) $(NAME) $(IS_ALPHA_TEST_EXEC)
 
 re: fclean all
 
-.PHONY: all clean fclean re test valgrind bonus
+.PHONY: all clean fclean re ft_isalpha_test
